@@ -1,5 +1,5 @@
 import React from 'react';
-import Aux from '../../hoc/Aux'
+import Aux from '../../hoc/Auxiliary'
 import BurgerBuilder from '../../containers/BurgerBuilder/BurgerBuilder'
 import styles from './Contents.module.css'
 const layout = (props) => (
