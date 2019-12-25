@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import Aux from '../../hoc/Auxiliary'
 import Burger from '../../components/Burger/Burger'
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
+import Modal from "../../components/UI/Modal/Modal"
+import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary"
 
 const INGREDIENTS_PRICE = {
     salad : 10,
@@ -19,7 +21,8 @@ class BurgerBuilder extends Component{
             bacon: 0
         },
         totalPrice : 20,
-        purchasable : false
+        purchasable : false,
+        purchasing : false
     };
 
     handleIngredientAdd = type => {
@@ -59,8 +62,7 @@ class BurgerBuilder extends Component{
 
     }
 
-
-    updatePurchasable(){
+    updatePurchasable(){  //It's without arrow function as it's not an event
         const ingredients = {
             ...this.state.ingredients
         }
@@ -69,6 +71,10 @@ class BurgerBuilder extends Component{
         this.setState({
             purchasable: sum > 0
         })
+    }
+
+    handlePurchasingEvent = () => {
+        this.setState({ purchasing: !this.state.purchasing })
     }
 
     render() {
@@ -80,8 +86,11 @@ class BurgerBuilder extends Component{
         }
         return (
             <Aux>
+                <Modal show={this.state.purchasing} isPurchasing={this.handlePurchasingEvent}> 
+                    <OrderSummary ingredients={this.state.ingredients}/>
+                </Modal>
                 <Burger ingredients = {this.state.ingredients} />
-                <div> <BuildControls addIngredient = {this.handleIngredientAdd} removeIngredient = {this.handleIngredientRemove} enableIngredient = {enable_info} price={this.state.totalPrice} isPurchasable = {this.state.purchasable} /> </div>
+                <div> <BuildControls addIngredient = {this.handleIngredientAdd} removeIngredient = {this.handleIngredientRemove} enableIngredient = {enable_info} price={this.state.totalPrice} isPurchasable = {this.state.purchasable} isPurchasing={this.handlePurchasingEvent}/> </div>
             </Aux>
         )
     }
