@@ -2,10 +2,17 @@
     width: 100%;
     margin: auto;
     height: 250px;
-    overflow: hidden,scroll;
+    overflow: scroll;
+    overflow-x: hidden;
     text-align: center;
+    justify-content: center;
     font-weight: bold;
     font-size: 1.2rem;
+}
+
+::-webkit-scrollbar {
+    width: 0px; /* remove scrollbar space */
+    background: rgba(65, 89, 117, 0.705);
 }
 
 @media (min-width: 1000px) and (min-height: 700px){
