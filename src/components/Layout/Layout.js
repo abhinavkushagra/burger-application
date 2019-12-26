@@ -1,12 +1,12 @@
 import React from 'react';
 import Aux from '../../hoc/Auxiliary'
-import BurgerBuilder from '../../containers/BurgerBuilder/BurgerBuilder'
+import Toolbar from '../Navigation/Toolbar/Toolbar'
 import styles from './Contents.module.css'
 const layout = (props) => (
     <Aux>
-        <div>Toolbar, SideDrawer, Backdrop</div>
-        <main className={styles.contents} >
-            <BurgerBuilder />
+        <Toolbar />
+        <main className={styles.Contents} >
+            {props.children}
         </main>
     </Aux>
 )
