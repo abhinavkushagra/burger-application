@@ -1,5 +1,5 @@
 import React from 'react'
-import Aux from '../../../hoc/Auxiliary'
+import Aux from '../../../hoc/Auxiliary/Auxiliary'
 import styles from './Toolbar.module.css'
 import Logo from '../../Logo/Logo'
 import NavigationItems from '../Toolbar/NavigationItems/NavigationItems'
