@@ -74,7 +74,7 @@ class BurgerBuilder extends Component{
     }
 
     handlePurchasingEvent = () => {
-        this.setState({ purchasing: !this.state.purchasing })
+        this.setState(prevState => ({ purchasing: !prevState.purchasing }))
     }
 
     handleContinueEvent = () => {
