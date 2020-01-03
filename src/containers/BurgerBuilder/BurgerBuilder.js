@@ -5,6 +5,7 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls'
 import Modal from "../../components/UI/Modal/Modal"
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary"
 import Axios from '../../Orders'
+import ErrorHandler from '../../hoc/ErrorHandler/ErrorHandler'
 import Loading from '../../components/UI/Loading/Loading'
 
 const INGREDIENTS_PRICE = {
@@ -97,12 +98,13 @@ class BurgerBuilder extends Component{
         })
         .then( response => {
             this.setState({loading: false, purchasing: false})
+            console.log(response)
             if(response.status === 200)
                 alert('Your delicious Burger\'s on the way')
         })
         .catch( error => {
+            console.log(error)
             this.setState({loading: false, purchasing: false})
-            alert('Ooops! Seems like some error')
         })
         
     }
@@ -119,7 +121,7 @@ class BurgerBuilder extends Component{
 
         return (
             <Aux>
-                <Modal show={this.state.purchasing} isPurchasing={this.handlePurchasingEvent}> 
+                <Modal show={this.state.purchasing} clicked={this.handlePurchasingEvent}> 
                     {orderSummary}            
                 </Modal>
                 <Burger ingredients = {this.state.ingredients} />
@@ -128,4 +130,4 @@ class BurgerBuilder extends Component{
         )
     }
 }
-export default BurgerBuilder;
+export default ErrorHandler(BurgerBuilder, Axios);
