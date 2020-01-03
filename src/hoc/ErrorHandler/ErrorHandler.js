@@ -5,16 +5,24 @@ import Aux from '../Auxiliary/Auxiliary'
 
 const errorHandler = (WrapperClass, Axios) => {
     return class extends Component {
+        constructor() {
+            super()
+            this.reqInterceptors = Axios.interceptors.request.use( request => {
+                this.setState({error: null})
+                return request
+            })
+            this.resInterceptors = Axios.interceptors.response.use( response => 
+                response 
+            , error => this.setState({error: error}))
+        }
         state = {
             error: null
         }
-        componentDidMount() {
-            Axios.interceptors.request.use( request => {
-                this.setState({error: null})
-            })
-            Axios.interceptors.response.use( response => 
-                response
-            , error => this.setState({error: error}))
+
+        componentWillUnmount() {
+            console.log(this.reqInterceptors + " " + this.resInterceptors)
+            Axios.interceptors.request.eject(this.reqInterceptors)
+            Axios.interceptors.response.eject(this.resInterceptors)
         }
 
         handleErrorConfirm = () => {
