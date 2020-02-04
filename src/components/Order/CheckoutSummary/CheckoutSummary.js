@@ -1,15 +1,16 @@
 import React from 'react';
 import Button from '../../UI/Button/Button'
-import styles from './CheckoutSummary.css'
+import styles from './CheckoutSummary.module.css'
+import Burger from '../../Burger/Burger'
 
 const checkoutSummary = props => {
     return (
         <div className={styles.CheckoutSummary}>
             <h1>We hope it tastes well!</h1>
-            <div style={{ width: '100px', margin: 'auto' }}>
+            <div style={{ width: '100%', margin: 'auto' }}>
                 <Burger ingredients={props.ingredients} />
-                <Button btnType="danger" clicked> Cancel </Button>
-                <Button btnType="Success" clicked> Continue </Button>
+                <Button btntype="Danger" clicked> Cancel </Button>
+                <Button btntype="Success" clicked> Continue </Button>
             </div>
         </div>
 
