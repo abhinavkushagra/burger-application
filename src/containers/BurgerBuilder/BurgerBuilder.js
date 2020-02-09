@@ -4,7 +4,7 @@ import Burger from '../../components/Burger/Burger'
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
 import Modal from "../../components/UI/Modal/Modal"
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary"
-import Axios from '../../Orders'
+import Axios from '../../axios-orders'
 import ErrorHandler from '../../hoc/ErrorHandler/ErrorHandler'
 import Loading from '../../components/UI/Loading/Loading'
 
@@ -88,29 +88,18 @@ class BurgerBuilder extends Component {
     }
 
     handleContinueEvent = () => {  //using Axios here to send POST request
-        this.setState({ loading: true })
-        Axios.post('/orders.json', {
-            customer: {
-                name: 'Abhinav Kushagra',
-                phone: '7003734561',
-                address: {
-                    street: '13th Baker Street',
-                    zip: 800150
-                },
-                email: 'abhinavkushagra@gmail.com'
-            },
-            ingredients: this.state.ingredients,
-            total_price: this.state.totalPrice
-        })
-            .then(response => {
-                this.setState({ loading: false, purchasing: false })
-                if (response.status === 200)
-                    alert('Your delicious Burger\'s on the way')
-            })
-            .catch(error => {
-                this.setState({ loading: false, purchasing: false })
-            })
+        const query_params = [];
+        query_params.push("price=" + this.state.totalPrice)
+        for(let i in this.state.ingredients){
+            query_params.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]))
+        } 
 
+        const query_string = query_params.join('&')
+
+        this.props.history.push({
+            pathname: '/checkout',
+            search: query_string
+        });
     }
 
     render() {
@@ -126,6 +115,7 @@ class BurgerBuilder extends Component {
                 <BuildControls addIngredient={this.handleIngredientAdd} removeIngredient={this.handleIngredientRemove} enableIngredient={enable_info} price={this.state.totalPrice} isPurchasable={this.state.purchasable} isPurchasing={this.handlePurchasingEvent} />
             </Aux>
         ) : this.state.error ? <p style={{ textAlign: "center", color: "white", fontWeight: "bold" }}> The Ingredients can't be loaded </p> : <Loading />;
+        
         const orderSummary = this.state.loading || this.state.ingredients == null ? <Loading /> : <OrderSummary ingredients={this.state.ingredients} clickedContinue={this.handleContinueEvent} clickedCancel={this.handlePurchasingEvent} price={this.state.totalPrice} />;
 
         return (
