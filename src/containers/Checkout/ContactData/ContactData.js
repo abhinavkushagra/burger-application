@@ -3,32 +3,63 @@ import Button from '../../../components/UI/Button/Button';
 import Loading from '../../../components/UI/Loading/Loading'
 import styles from './ContactData.module.css';
 import Axios from '../../../axios-orders';
+import Input from '../../../components/UI/Input/Input';
 
 class ContactData extends Component {
     months = ["JAN", "FEB", "MAR","APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     state = {
-        name: '',
-        email: '',
-        contact_no: 0,
-        address: {
-            street: '',
-            zip: 0
+        orderForm :{
+            name : {
+                elementType : 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Your Name'
+                },
+                value: ''
+            },
+            email : {
+                elementType : 'input',
+                elementConfig: {
+                    type: 'email',
+                    placeholder: 'Your E-mail'
+                },
+                value: ''
+            },
+            contact_no : {
+                elementType : 'input',
+                elementConfig: {
+                    type: 'number',
+                    maxLength: '10',
+                    placeholder: 'Your Contact No.'
+                },
+                value: ''
+            },
+            street : {
+                elementType : 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Street Address'
+                },
+                value: ''
+            },
+            zip : {
+                elementType : 'input',
+                elementConfig: {
+                    type: 'number',
+                    maxLength: '6'
+                    placeholder: 'Zip'
+                },
+                value: ''
+            }
         },
-        loading: false,
+        loading: false
     }
     handleOrder = (event) => {
         event.preventDefault();
         this.setState({ loading: true })
         const date = new Date();
         Axios.post('/orders.json', {
-            customer: {
-                name: 'Abhinav Kushagra',
-                email: 'abhinavkushagra@gmail.com',
-                contact_no: 7003734561,
-                address: {
-                    street: '13th Baker Street',
-                    zip: 800150
-                },
+            
             },
             ingredients: this.props.ingredients,
             total_price: this.props.totalPrice,
@@ -50,11 +81,11 @@ class ContactData extends Component {
     render() {
         const form = !this.state.loading? (
             < form >
-                <input className={styles.Input} type="text" name="name" placeholder="Your Name" />
-                <input className={styles.Input} type="email" name="email" placeholder="Your Email" />
-                <input className={styles.Input} type="number" maxLength="10" name="contact-no" placeholder="Your Contact Number" />
-                <input className={styles.Input} type="text" name="street" placeholder="Street Address I" />
-                <input className={styles.Input} type="number" maxLength="6" name="zip-code" placeholder="Your Zip" />
+                <Input type="text" name="name" placeholder="Your Name" />
+                <Input type="email" name="email" placeholder="Your Email" />
+                <Input type="number" maxLength="10" name="contact-no" placeholder="Your Contact Number" />
+                <Input type="text" name="street" placeholder="Street Address I" />
+                <Input type="number" maxLength="6" name="zip-code" placeholder="Your Zip" />
                 <Button btntype="Success" clicked={this.handleOrder}> Order </Button>
             </form >
         ) : <Loading />;

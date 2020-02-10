@@ -3,7 +3,6 @@
     width: 80%;
     padding: 10px;
     text-align: center;
-  
     justify-items: center;
     box-shadow: 0 1px 5px 8px rgba(128, 128, 128, 0.767);
     border: 1px solid black;
@@ -13,7 +12,7 @@
     color: white;
     margin-top: 5px;
 }
-.Input {
+/* .Input {
     display: block;
     box-align: center;
     width: 90%;
@@ -21,7 +20,7 @@
     margin: 10px auto 10px auto;
     border: 1px solid black;
     border-radius: 4px;
-}
+} */
 
 @media(min-width: 600px) {
     .ContactData{
