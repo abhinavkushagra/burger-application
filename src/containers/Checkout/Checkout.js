@@ -33,8 +33,6 @@ class Checkout extends Component{
         this.props.history.replace('/checkout/contact-data')
     }
 
-    
-    
     render() {
         return (
             <div>  
