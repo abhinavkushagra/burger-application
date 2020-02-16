@@ -10,6 +10,15 @@
     font-weight: bold;
 }
 
+.Button:disabled{
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.Button:hover {
+    background-color: #222;
+}
+
 .Success {
     color: #5C9210;
 }

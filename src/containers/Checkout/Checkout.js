@@ -22,7 +22,6 @@ class Checkout extends Component{
             } 
         }
         this.setState({ingredients : ingredients, total_price: price})
-        console.log(this.state.ingredients)
     }
 
     handleCancel = () => {

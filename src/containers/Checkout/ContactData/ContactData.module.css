@@ -1,7 +1,7 @@
 .ContactData {
     margin: 15px auto;
     width: 80%;
-    padding: 10px;
+    padding: 0px;
     text-align: center;
     justify-items: center;
     box-shadow: 0 1px 5px 8px rgba(128, 128, 128, 0.767);
@@ -10,17 +10,9 @@
 }
 .ContactData h3{
     color: white;
-    margin-top: 5px;
+    padding-top: 8px ;
 }
-/* .Input {
-    display: block;
-    box-align: center;
-    width: 90%;
-    padding: 10px;
-    margin: 10px auto 10px auto;
-    border: 1px solid black;
-    border-radius: 4px;
-} */
+
 
 @media(min-width: 600px) {
     .ContactData{
