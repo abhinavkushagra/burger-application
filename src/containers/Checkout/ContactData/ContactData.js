@@ -4,6 +4,7 @@ import Loading from '../../../components/UI/Loading/Loading'
 import styles from './ContactData.module.css';
 import Axios from '../../../axios-orders';
 import Input from '../../../components/UI/Input/Input';
+import { connect } from 'react-redux';
 
 
 class ContactData extends Component {
@@ -135,7 +136,7 @@ class ContactData extends Component {
         const date = new Date();
         Axios.post('/orders.json', {
             ingredients: this.props.ingredients,
-            total_price: this.props.totalPrice,
+            total_price: this.props.total_price,
             date: date.getDate() + "-" + this.months[date.getMonth() + 1] + "-" + date.getFullYear(),
             time: date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
         })
@@ -186,4 +187,11 @@ class ContactData extends Component {
     }
 }
 
-export default ContactData;
+const mapStateToProps = state => {
+    return{
+        ingredients : state.ingredients,
+        total_price : state.totalPrice
+    }
+}
+
+export default connect(mapStateToProps)(ContactData);
