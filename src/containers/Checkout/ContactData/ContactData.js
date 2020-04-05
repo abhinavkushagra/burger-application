@@ -2,9 +2,12 @@ import React, { Component } from "react";
 import Button from '../../../components/UI/Button/Button';
 import Loading from '../../../components/UI/Loading/Loading'
 import styles from './ContactData.module.css';
-import Axios from '../../../axios-orders';
 import Input from '../../../components/UI/Input/Input';
 import { connect } from 'react-redux';
+import Axios from '../../../axios-orders';
+import WithError from '../../../hoc/ErrorHandler/ErrorHandler';
+import {purchaseBurger} from '../../../store/actions/index';
+import updateState, { checkValidity } from '../../../shared/utilities'
 
 
 class ContactData extends Component {
@@ -31,7 +34,8 @@ class ContactData extends Component {
                 },
                 value: '',
                 validation : {
-                    required: true
+                    required: true,
+                    isEmail: true
                 },
                 valid: 'f'
             },
@@ -45,7 +49,8 @@ class ContactData extends Component {
                 validation : {
                     required: true,
                     minLength: 10,
-                    maxLength: 10
+                    maxLength: 10,
+                    isNumeric: true
                 },
                 valid: 'f'
             },
@@ -66,7 +71,8 @@ class ContactData extends Component {
                 elementConfig: {
                     type: 'number',
                     maxLength: '6',
-                    placeholder: 'Zip'
+                    placeholder: 'Zip',
+                    isNumeric: true
                 },
                 value: '',
                 validation : {
@@ -84,43 +90,25 @@ class ContactData extends Component {
                         {value : 'cheapest', displayValue: 'Cheapest'}
                     ]
                 },
+                value: 'fastest',
                 validation : {
 
                 },
                 valid: true
             },
         },
-        loading: false,
         isFormValid: false
     }
-    checkValidity(value, rules) {
-        let isValid = true
-
-        if(rules.required){
-            isValid = value.trim() !== '' 
-        }
-
-        if(rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid
-        }
-
-        if(rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid
-        }
-
-        return isValid
-    }
-
+    
     handleChange = (event, identifier) => {
-        const updatedOrderForm = {
-            ...this.state.orderForm
-        }
-        const updatedFormElement = {
-            ...this.state.orderForm[identifier]
-        }
-        updatedFormElement.value = event.target.value
-        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation)
-        updatedOrderForm[identifier] = updatedFormElement
+        const updatedFormElement = updateState( this.state.orderForm[identifier], {
+            value: event.target.value,
+            valid: checkValidity(event.target.value, this.state.orderForm[identifier].validation) 
+        })
+        
+        const updatedOrderForm = updateState( this.state.orderForm, {
+            [identifier]: updatedFormElement
+        })
         
         let isFormValid = true;
         
@@ -130,28 +118,25 @@ class ContactData extends Component {
 
         this.setState({ orderForm: updatedOrderForm, isFormValid: isFormValid})
     }
+
     handleOrder = (event) => {
         event.preventDefault();
-        this.setState({ loading: true })
         const date = new Date();
-        Axios.post('/orders.json', {
+        const form_data = {};
+        for(let form_element in this.state.orderForm){
+            form_data[form_element] = this.state.orderForm[form_element].value
+        }
+        const order_data =  {
             ingredients: this.props.ingredients,
             total_price: this.props.total_price,
+            contact_info: form_data,
+            user_id: this.props.user_id,
             date: date.getDate() + "-" + this.months[date.getMonth() + 1] + "-" + date.getFullYear(),
             time: date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
-        })
-            .then(response => {
-                console.log(response)
-                this.setState({ loading: false })
-                if (response.status === 200)
-                    alert('Your delicious Burger\'s on the way')
-                    this.props.history.push('/')
-            })
-            .catch(error => {
-                this.setState({ loading: false })
-            })
-           
+        }
+        this.props.onPurchase(order_data, this.props.token); 
     }
+
     render() {
         const elementsArray = [];
         for(let key in this.state.orderForm){
@@ -161,8 +146,7 @@ class ContactData extends Component {
             })
         }
         
-
-        const form = !this.state.loading? (
+        const form = !this.props.loading? (
             < form >
                 {elementsArray.map( element => (
                         <Input key={element.id} 
@@ -189,9 +173,18 @@ class ContactData extends Component {
 
 const mapStateToProps = state => {
     return{
-        ingredients : state.ingredients,
-        total_price : state.totalPrice
+        ingredients : state.burger_builder.ingredients,
+        total_price : state.burger_builder.totalPrice,
+        loading : state.order.loading,
+        token: state.auth.token,
+        user_id: state.auth.user_id
     }
 }
 
-export default connect(mapStateToProps)(ContactData);
+const mapDispatchToProps = dispatch => {
+    return{
+        onPurchase : (order_data, token) => dispatch(purchaseBurger(order_data, token))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps) (WithError(ContactData, Axios));

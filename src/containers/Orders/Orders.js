@@ -1,35 +1,35 @@
 import React, {Component} from 'react'
 import Order  from '../../components/Order/Order'
+import { connect } from 'react-redux'
 import Axios from '../../axios-orders'
-import withError from '../../hoc/ErrorHandler/ErrorHandler'
+import WithError from '../../hoc/ErrorHandler/ErrorHandler'
+import { fetchOrders } from '../../store/actions/index'
+import Loading from '../../components/UI/Loading/Loading'
 
 class Orders extends Component {
-    state = {
-        orders : [],
-        loading: true
-    }
     componentDidMount() {
-        Axios.get('/orders.json')
-        .then( response => {
-            let fetched_orders = []
-            for(let key in response.data){
-                fetched_orders.push({
-                    ...response.data[key],
-                    id: key, 
-                })
-            }
-            this.setState({loading : false, orders: fetched_orders})
-        })
-        .catch(error => {
-            console.log(error)
-            this.setState({loading: false})
-        })
+        this.props.onFetchOrders(this.props.token, this.props.user_id)
     }
     render() {
-        return this.state.orders.map( order =>
+        return this.props.loading? <Loading /> : this.props.orders.map( order =>
             <Order key={order.id} ingredients={order.ingredients} total_price={+order.total_price} timestamp={order.date + " " + order.time} />
         )
     }
 }
 
-export default withError(Orders, Axios);
+const mapStateToProps = state => {
+    return {
+        orders : state.order.orders,
+        loading : state.order.loading,
+        token: state.auth.token,
+        user_id: state.auth.user_id
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onFetchOrders: (token, user_id) => dispatch(fetchOrders(token, user_id))
+    }
+} 
+
+export default connect(mapStateToProps, mapDispatchToProps) (WithError(Orders, Axios));
