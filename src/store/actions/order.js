@@ -1,5 +1,5 @@
-import { PURCHASE_BURGER_SUCCESS, PURCHASE_BURGER_FAIL, PURCHASE_BURGER_START, PURCHASE_BURGER_INIT, FETCH_ORDER_START, FETCH_ORDER_SUCCESS, FETCH_ORDER_FAIL } from './actions';
-import Axios from '../../axios-orders'
+import { PURCHASE_BURGER ,PURCHASE_BURGER_SUCCESS, PURCHASE_BURGER_FAIL, PURCHASE_BURGER_START, PURCHASE_BURGER_INIT, FETCH_ORDER_START, FETCH_ORDER_SUCCESS, FETCH_ORDER_FAIL, FETCH_ORDER } from './actions';
+
 
 export const purchaseInit = () => {
     return {
@@ -7,7 +7,7 @@ export const purchaseInit = () => {
     }
 }
 
-const purchaseBurgerStart = () => {
+export const purchaseBurgerStart = () => {
     return {
         type: PURCHASE_BURGER_START
     }
@@ -29,17 +29,10 @@ export const purchaseBurgerFail = error => {
 }
 
 export const purchaseBurger = (order_data, token) => {
-    return dispatch => {
-        dispatch(purchaseBurgerStart())
-        Axios.post('/orders.json?auth=' + token, order_data)
-            .then(response => {
-                dispatch(purchaseBurgerSuccess(response.data.name, order_data))
-                if (response.status === 200)
-                    alert('Your delicious Burger\'s on the way')
-            })
-            .catch(error => {
-                dispatch(purchaseBurgerFail(error))
-            })
+    return {
+        type: PURCHASE_BURGER,
+        order_data: order_data,
+        token: token
     }
 }
 
@@ -65,23 +58,10 @@ export const fetchOrderFail = error => {
 }
 
 export const fetchOrders = (token, user_id) => {
-    return dispatch => {
-        dispatch(fetchOrderStart())
-        const query_params = 'auth=' + token + '&orderBy="user_id"&equalTo="' + user_id + '"'
-        Axios.get('/orders.json?' + query_params)
-        .then( response => {
-            let fetched_orders = []
-            for(let key in response.data){
-                fetched_orders.push({
-                    ...response.data[key],
-                    id: key, 
-                })
-            }
-            dispatch(fetchOrderSuccess(fetched_orders))
-        })
-        .catch(error => {
-            dispatch(fetchOrderFail(error))
-        })
+    return{
+        type: FETCH_ORDER,
+        token: token,
+        user_id: user_id
     }
 }
 
