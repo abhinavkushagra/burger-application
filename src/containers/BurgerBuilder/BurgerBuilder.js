@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { addIngredient, removeIngredient, initIngredients, purchaseInit, setAuthRedirectPath } from '../../store/actions/'
 import Aux from '../../hoc/Auxiliary/Auxiliary'
@@ -11,20 +11,18 @@ import ErrorHandler from '../../hoc/ErrorHandler/ErrorHandler'
 import Loading from '../../components/UI/Loading/Loading'
 
 
-export class BurgerBuilder extends Component {
+const BurgerBuilder = props => {
+    const [purchasing, setPurchasing] = useState(false)
+    const { onInitIngredients } = props
+    
 
-    state = {
-        purchasing: false,
-        loading: false
-    };
+    useEffect(() => {
+        onInitIngredients()
+    }, [onInitIngredients])
 
-    componentDidMount() {
-        this.props.onInitIngredients();
-    }
-
-    updatePurchasable() {  //It's without arrow function as it's not an event
+    const updatePurchasable = () => {  //It's without arrow function as it's not an event
         const ingredients = {
-            ...this.props.ingredients
+            ...props.ingredients
         }
 
         let sum = Object.keys(ingredients).map(key => ingredients[key]).reduce((sum, value) => sum + value, 0)
@@ -32,53 +30,51 @@ export class BurgerBuilder extends Component {
         return sum > 0
     }
 
-    handlePurchasingEvent = () => {
-        if (this.props.isAuthenticated) {
-            this.setState(prevState => ({ purchasing: !prevState.purchasing }))
+    const handlePurchasingEvent = () => {
+        if (props.isAuthenticated) {
+            setPurchasing(!purchasing)
         }
         else {
-            this.props.onSetAuthRedirectPath('/checkout')
-            this.props.history.push('/auth')
+            props.onSetAuthRedirectPath('/checkout')
+            props.history.push('/auth')
         }
 
     }
 
-    handleContinueEvent = () => {
-        this.props.onPurchaseInit();  //using Axios here to send POST request
-        this.props.history.push('/checkout');
+    const handleContinueEvent = () => {
+        props.onPurchaseInit();  //using Axios here to send POST request
+        props.history.push('/checkout');
     }
 
-    render() {
         const enable_info = {
-            ...this.props.ingredients
+            ...props.ingredients
         }
         for (let key in enable_info) {
             enable_info[key] = enable_info[key] > 0
         }
-        const burger = this.props.ingredients ? (
+        const burger = props.ingredients ? (
             <Aux>
-                <Burger ingredients={this.props.ingredients} />
-                <BuildControls addIngredient={this.props.onIngredientAdd}
-                    removeIngredient={this.props.onIngredientRemove}
-                    enableIngredient={enable_info} price={this.props.total_price}
-                    isPurchasable={this.updatePurchasable()}
-                    isPurchasing={this.handlePurchasingEvent}
-                    isAuth={this.props.isAuthenticated}
+                <Burger ingredients={props.ingredients} />
+                <BuildControls addIngredient={props.onIngredientAdd}
+                    removeIngredient={props.onIngredientRemove}
+                    enableIngredient={enable_info} price={props.total_price}
+                    isPurchasable={updatePurchasable}
+                    isPurchasing={handlePurchasingEvent}
+                    isAuth={props.isAuthenticated}
                 />
             </Aux>
-        ) : this.props.error ? <p style={{ textAlign: "center", color: "white", fontWeight: "bold" }}> The Ingredients can't be loaded </p> : <Loading />;
+        ) : props.error ? <p style={{ textAlign: "center", color: "white", fontWeight: "bold" }}> The Ingredients can't be loaded </p> : <Loading />;
 
-        const orderSummary = this.state.loading || this.props.ingredients == null ? <Loading /> : <OrderSummary ingredients={this.props.ingredients} clickedContinue={this.handleContinueEvent} clickedCancel={this.handlePurchasingEvent} price={this.props.total_price} />;
+        const orderSummary =  props.ingredients == null ? <Loading /> : <OrderSummary ingredients={props.ingredients} clickedContinue={handleContinueEvent} clickedCancel={handlePurchasingEvent} price={props.total_price} />;
 
         return (
             <Aux>
-                <Modal show={this.state.purchasing} clicked={this.handlePurchasingEvent}>
+                <Modal show={purchasing} clicked={handlePurchasingEvent}>
                     {orderSummary}
                 </Modal>
                 {burger}
             </Aux>
         )
-    }
 }
 
 const mapStateToProps = state => {

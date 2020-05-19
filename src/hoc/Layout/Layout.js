@@ -1,28 +1,28 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Aux from '../Auxiliary/Auxiliary'
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar'
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer'
 import styles from './Contents.module.css'
 import { connect } from 'react-redux';
 
-class Layout extends Component {
-    state = {
-        showSideDrawer : false
+const Layout = props => {
+
+    const [show_side_drawer, setShowSideDrawer] = useState(false)
+    
+    const sideDrawerSwitchHandler = () => {
+        setShowSideDrawer(!show_side_drawer)
     }
-    sideDrawerSwitchHandler = () => {
-        this.setState(prevState => ({showSideDrawer : !prevState.showSideDrawer}))
-    }
-    render() {
-        return (
-            <Aux>
-                <Toolbar isAuth={this.props.isAuth} clicked={this.sideDrawerSwitchHandler}/>
-                <SideDrawer isAuth={this.props.isAuth} show={this.state.showSideDrawer} clicked={this.sideDrawerSwitchHandler}/>
-                <main className={styles.Contents} >
-                    {this.props.children}
-                </main>
-            </Aux>
-        )
-    }
+
+    return (
+        <Aux>
+            <Toolbar isAuth={props.isAuth} clicked={sideDrawerSwitchHandler} />
+            <SideDrawer isAuth={props.isAuth} show={show_side_drawer} clicked={sideDrawerSwitchHandler} />
+            <main className={styles.Contents} >
+                {props.children}
+            </main>
+        </Aux>
+    )
+
 }
 
 const mapStateToProps = state => {
@@ -31,4 +31,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps) (Layout);
+export default connect(mapStateToProps)(Layout);

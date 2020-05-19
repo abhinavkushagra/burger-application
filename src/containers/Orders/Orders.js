@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {useEffect} from 'react'
 import Order  from '../../components/Order/Order'
 import { connect } from 'react-redux'
 import Axios from '../../axios-orders'
@@ -6,15 +6,16 @@ import WithError from '../../hoc/ErrorHandler/ErrorHandler'
 import { fetchOrders } from '../../store/actions/index'
 import Loading from '../../components/UI/Loading/Loading'
 
-class Orders extends Component {
-    componentDidMount() {
-        this.props.onFetchOrders(this.props.token, this.props.user_id)
-    }
-    render() {
-        return this.props.loading? <Loading /> : this.props.orders.map( order =>
+const Orders = props => {
+    const {onFetchOrders, token, user_id, loading, orders} = props
+    useEffect(() => {
+        onFetchOrders(token, user_id)
+    }, [onFetchOrders, token, user_id]) 
+
+    
+        return loading? <Loading /> : orders.map( order =>
             <Order key={order.id} ingredients={order.ingredients} total_price={+order.total_price} timestamp={order.date + " " + order.time} />
         )
-    }
 }
 
 const mapStateToProps = state => {
